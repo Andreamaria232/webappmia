@@ -7,12 +7,13 @@ import os
 import json
 from google.oauth2.service_account import Credentials
 
-print("cazzo")
-
 # Carica le credenziali da variabile d'ambiente
 creds_json = os.environ.get("GOOGLE_CREDS")
 creds_dict = json.loads(creds_json)
 creds = Credentials.from_service_account_info(creds_dict)
+
+gc = gspread.authorize(creds)
+sheet = gc.open("NOME_DEL_TUO_FILE").sheet1  # Sostituisci "NOME_DEL_TUO_FILE" con il nome corretto del file su Google Sheets
 
 def load_data():
     data = sheet.get_all_records()
