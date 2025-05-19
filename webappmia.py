@@ -7,14 +7,10 @@ import os
 import json
 from google.oauth2.service_account import Credentials
 
-creds_json = os.environ.get("STREAMLIT_SECRETS")
-
-# Leggi il JSON dal secrets.toml
-import streamlit as st
-
-creds_dict = json.loads(st.secrets["google"]["creds"])
-
-creds = Credentials.from_service_account_info(creds_dict, scopes=["https://www.googleapis.com/auth/spreadsheets"])
+# Carica le credenziali da variabile d'ambiente
+creds_json = os.environ.get("GOOGLE_CREDS")
+creds_dict = json.loads(creds_json)
+creds = Credentials.from_service_account_info(creds_dict)
 
 def load_data():
     data = sheet.get_all_records()
