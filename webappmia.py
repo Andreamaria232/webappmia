@@ -7,6 +7,8 @@ import os
 import json
 from google.oauth2.service_account import Credentials
 
+print("cazzo")
+
 # Carica le credenziali da variabile d'ambiente
 creds_json = os.environ.get("GOOGLE_CREDS")
 creds_dict = json.loads(creds_json)
