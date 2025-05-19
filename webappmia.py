@@ -10,14 +10,10 @@ from google.oauth2.service_account import Credentials
 # Definisci gli scopes
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
 
-# Carica le credenziali da variabile d'ambiente
-creds_json = os.environ.get("GOOGLE_CREDS")
-creds_dict = json.loads(creds_json)
-
 # Inizializza le credenziali con gli scopes
-creds = Credentials.from_service_account_info(creds_dict, scopes=SCOPES)
-
+creds = Credentials.from_service_account_file("monitoraggio-del-fumo-acd5108fd3d8.json", scopes = SCOPES)
 gc = gspread.authorize(creds)
+
 sheet = gc.open("DatiFumo").sheet1  # Sostituisci "DatiFumo" con il nome corretto del file su Google Sheets
 
 def load_data():
