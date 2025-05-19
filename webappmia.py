@@ -18,7 +18,7 @@ creds_dict = json.loads(creds_json)
 creds = Credentials.from_service_account_info(creds_dict, scopes=SCOPES)
 
 gc = gspread.authorize(creds)
-sheet = gc.open("NOME_DEL_TUO_FILE").sheet1  # Sostituisci "NOME_DEL_TUO_FILE" con il nome corretto del file su Google Sheets
+sheet = gc.open("DatiFumo").sheet1  # Sostituisci "DatiFumo" con il nome corretto del file su Google Sheets
 
 def load_data():
     data = sheet.get_all_records()
