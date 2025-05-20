@@ -30,10 +30,19 @@ def load_data():
         data = pd.DataFrame(columns=["email", "data", "stress", "sigarette_stimate", "nicotina_totale"])
     return data
 
-def save_data(df):
-    # Salva il DataFrame su Dropbox sovrascrivendo il file Excel
+salva aggiungendo i nuovi dati, senza sovrascrivere quelli esistenti
+def save_data(new_data):
+    existing_data = load_data()
+
+    # Rimuove duplicati per email + data (opzionale)
+    existing_data = existing_data[~(
+        (existing_data["email"] == new_data.iloc[0]["email"]) &
+        (existing_data["data"] == new_data.iloc[0]["data"])
+    )]
+
+    updated_df = pd.concat([existing_data, new_data], ignore_index=True)
     output = BytesIO()
-    df.to_excel(output, index=False, engine="openpyxl")
+    updated_df.to_excel(output, index=False, engine="openpyxl")
     output.seek(0)
     dbx.files_upload(output.read(), DROPBOX_PATH, mode=dropbox.files.WriteMode.overwrite)
 
