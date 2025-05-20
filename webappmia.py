@@ -30,7 +30,7 @@ def load_data():
         data = pd.DataFrame(columns=["email", "data", "stress", "sigarette_stimate", "nicotina_totale"])
     return data
 
-salva aggiungendo i nuovi dati, senza sovrascrivere quelli esistenti
+#salva aggiungendo i nuovi dati, senza sovrascrivere quelli esistenti
 def save_data(new_data):
     existing_data = load_data()
 
