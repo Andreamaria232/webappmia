@@ -1,38 +1,48 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
-from datetime import datetime
-import gspread
 import os
-import json
-from google.oauth2.service_account import Credentials
+from datetime import datetime
+import dropbox
+from io import BytesIO
 
-# Definisci gli scopes
-SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
+# TOKEN ottenuto da https://www.dropbox.com/developers/apps
+ACCESS_TOKEN = os.getenv("DROPBOX_TOKEN")  # Usa una variabile di ambiente su Render
+if not ACCESS_TOKEN:
+    st.error("Token Dropbox mancante. Assicurati che la variabile di ambiente DROPBOX_TOKEN sia impostata.")
+    st.stop()
+DROPBOX_PATH = "/dati_fumo.xlsx"  # Percorso del file Excel nel tuo Dropbox
 
-# Inizializza le credenziali con gli scopes
-creds = Credentials.from_service_account_file("monitoraggio-del-fumo-acd5108fd3d8.json", scopes = SCOPES)
-gc = gspread.authorize(creds)
+dbx = dropbox.Dropbox(ACCESS_TOKEN)
 
-sheet = gc.open("DatiFumo").sheet1  # Sostituisci "DatiFumo" con il nome corretto del file su Google Sheets
+def get_excel_file():
+    try:
+        metadata, res = dbx.files_download(DROPBOX_PATH)
+        return BytesIO(res.content)
+    except dropbox.exceptions.ApiError as e:
+        # Se il file non esiste ancora
+        return BytesIO()
 
 def load_data():
-    data = sheet.get_all_records()
-    return pd.DataFrame(data)
+    try:
+        data = pd.read_excel(get_excel_file())
+    except:
+        data = pd.DataFrame(columns=["email", "data", "stress", "sigarette_stimate", "nicotina_totale"])
+    return data
 
-def save_data(new_df):
-    existing_records = sheet.get_all_records()
-    existing_df = pd.DataFrame(existing_records)
+def save_data(df):
+    # Salva il DataFrame su Dropbox sovrascrivendo il file Excel
+    output = BytesIO()
+    df.to_excel(output, index=False, engine="openpyxl")
+    output.seek(0)
+    dbx.files_upload(output.read(), DROPBOX_PATH, mode=dropbox.files.WriteMode.overwrite)
 
-    updated_df = pd.concat([existing_df, new_df], ignore_index=True)
-
-    for i in range(len(new_df)):
-        row = new_df.iloc[i].tolist()
-        sheet.append_row(row)
-
-def delete_file(file_path=None):
-    sheet.clear()
-    print("I dati su Google Sheets sono stati cancellati.")
+def delete_file():
+    try:
+        dbx.files_delete_v2(DROPBOX_PATH)
+        st.success("File cancellato con successo da Dropbox.")
+    except dropbox.exceptions.ApiError:
+        st.warning("Nessun file da cancellare.")
 
 # Layout iniziale della pagina web tramite streamlit
 st.set_page_config(page_title="Monitoraggio Fumo", layout="wide")
