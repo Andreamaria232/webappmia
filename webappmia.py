@@ -6,14 +6,13 @@ from datetime import datetime
 import dropbox
 from io import BytesIO
 
-# TOKEN ottenuto da https://www.dropbox.com/developers/apps
-ACCESS_TOKEN = os.getenv("DROPBOX_TOKEN")  # Usa una variabile di ambiente su Render
-if not ACCESS_TOKEN:
-    st.error("Token Dropbox mancante. Assicurati che la variabile di ambiente DROPBOX_TOKEN sia impostata.")
-    st.stop()
-DROPBOX_PATH = "/dati_fumo.xlsx"  # Percorso del file Excel nel tuo Dropbox
+DROPBOX_PATH = "/filefumo.xlsx" 
 
-dbx = dropbox.Dropbox(ACCESS_TOKEN)
+dbx = dropbox.Dropbox(
+    oauth2_refresh_token=os.getenv("DROPBOX_REFRESH_TOKEN"),
+    app_key=os.getenv("DROPBOX_APP_KEY"),
+    app_secret=os.getenv("DROPBOX_APP_SECRET")
+)
 
 def get_excel_file():
     try:
