@@ -94,7 +94,7 @@ if scelta_file == "Sì":
         sig_stimate = st.number_input("Quante sigarette pensi di aver fumato oggi?", min_value=0, max_value=100, value=0)
         
         #imput nicotina/s della sigaretta
-        nicotina_s = st.number_input("Qual è la quantità di nicotina al secondo erogata dalla tua sigaretta?", min_value = 0.00, max_value = 100.00, value = 0.15)
+        nicotina_s = st.number_input("Qual è la quantità di nicotina al secondo erogata dalla tua sigaretta?", min_value = 0.00, max_value = 100.00, value = 0.15, help="Inserisci il valore usando il punto come separatore decimale. Esempio: 0.5 (non 0,5)")
 
         # Calcolo nicotina
         n_on = data_grezzi[data_grezzi['LED binario'] == 1].shape[0]
@@ -154,7 +154,7 @@ else:
 
     # Calcolo nicotina manuale
     sig_stimate = st.number_input("Quante sigarette pensi di aver fumato oggi?", min_value=0, max_value=100, value=0)
-    nicotina_per_sigaretta = st.number_input("Qual è la quantità di nicotina erogata dalla tua sigaretta?", min_value = 0.00, max_value = 100.00, value = 0.15)
+    nicotina_per_sigaretta = st.number_input("Qual è la quantità di nicotina erogata dalla tua sigaretta?", min_value = 0.00, max_value = 100.00, value = 0.15, help="Inserisci il valore usando il punto come separatore decimale. Esempio: 0.5 (non 0,5)")
     nicotina_totale = sig_stimate * nicotina_per_sigaretta
     st.info(f"Nicotina stimata: {nicotina_totale:.2f} mg (input manuale)")
     
